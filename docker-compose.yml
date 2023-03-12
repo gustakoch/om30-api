@@ -1,0 +1,36 @@
+version: "3"
+services:
+    webserver:
+        image: gustakoch/php8.0
+        container_name: apache-php-om30
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        volumes:
+            - ./:/var/www/html
+            - /etc/timezone:/etc/timezone
+        ports:
+            - "80:80"
+        depends_on:
+            - postgres
+        restart: always
+
+    postgres:
+        image: postgres:13
+        container_name: pgsql-om30
+        volumes:
+            - /etc/timezone:/etc/timezone
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+        ports:
+            - "5432:5432"
+        restart: always
+
+    redis:
+        image: redis:7-alpine
+        container_name: redis-om30
+        networks:
+            - default
+        ports:
+            - 6379:6379
+        restart: always
