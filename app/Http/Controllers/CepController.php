@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class CepController extends Controller
 {
@@ -14,14 +15,23 @@ class CepController extends Controller
             return response()->json(['message' => 'Um CEP deve ser informando para realizar a consulta.'], 400);
         }
 
+        $cep = $request->query('search');
+        $cachedCep = Cache::get('cep:'.$cep);
+
+        if ($cachedCep) {
+            return $cachedCep;
+        }
+
         try {
             $client = new Client();
-            $response = $client->request('GET', "https://viacep.com.br/ws/{$request->query('search')}/json/");
+            $response = $client->request('GET', "https://viacep.com.br/ws/{$cep}/json/");
             $statusCode = $response->getStatusCode();
 
             if ($statusCode == 200) {
                 $jsonResponse = $response->getBody();
                 $cepInfo = json_decode($jsonResponse);
+
+                Cache::put('cep:'.$cep, $cepInfo, now()->addDay());
 
                 return $cepInfo;
             } else {
