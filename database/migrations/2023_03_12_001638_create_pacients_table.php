@@ -21,12 +21,12 @@ class CreatePacientsTable extends Migration
             $table->date('birth_day');
             $table->string('cpf');
             $table->string('cns');
-            $table->unsignedBigInteger('id_address');
+            $table->unsignedBigInteger('address_id');
             $table->timestamps();
         });
 
         Schema::table('pacients', function(Blueprint $table) {
-            $table->foreign('id_address')->references('id')->on('addresses');
+            $table->foreign('address_id')->references('id')->on('addresses')->onDelete('cascade');
         });
     }
 

@@ -15,11 +15,11 @@ class Pacient extends Model
         'birth_day',
         'cpf',
         'cns',
-        'id_address'
+        'address_id'
     ];
 
     public function address()
     {
-        return $this->belongsTo(Address::class, 'id_address');
+        return $this->belongsTo(Address::class, 'address_id');
     }
 }

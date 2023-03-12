@@ -113,7 +113,7 @@ class PacientController extends Controller
         }
 
         $pacient = Pacient::create(array_merge($request->all(), [
-            'id_address' => $address->id,
+            'address_id' => $address->id,
             'photo' => $namePhotoFile
         ]));
         if (!$pacient)
@@ -126,7 +126,7 @@ class PacientController extends Controller
     {
         if (Pacient::where('id', $id)->exists()) {
             $pacient = Pacient::find($id);
-            $address = Address::find($pacient->id_address);
+            $address = Address::find($pacient->address_id);
 
             $namePhotoFile = $pacient->photo;
 
@@ -164,11 +164,14 @@ class PacientController extends Controller
     public function destroy($id)
     {
         $pacient = Pacient::find($id);
-
         if (!$pacient)
             return response()->json(['message' => 'Registro não encontrado.'], 404);
 
+
+        $address = Address::find($pacient->address_id);
+
         $pacient->delete();
+        $address->delete();
 
         return response()->json(['message' => 'Registro removido com sucesso.']);
     }
