@@ -15,14 +15,20 @@ class PacientController extends Controller
     use UploadLocalFiles;
     use CNSValidation;
 
-    public function index()
+    public function index(Request $request)
     {
-        $pacients = Pacient::with('address')->get();
+        $search = $request->query('search');
 
-        if (!$pacients)
+        $pacients = Pacient::with('address')
+            ->whereRaw('lower(cpf) LIKE ?', ["%".strtolower($search)."%"])
+            ->orWhereRaw('lower(full_name) LIKE ?', ["%".strtolower($search)."%"])
+            ->get();
+
+        if ($pacients->isEmpty()) {
             return response()->json(['message' => 'Nenhum registro encontrado.'], 404);
+        }
 
-        $pacients->transform(function($pacient) {
+        $pacients->transform(function ($pacient) {
             if ($pacient->photo) {
                 $pacient->photo = $_ENV['APP_URL'] . '/storage/photos/' . $pacient->photo;
             }
