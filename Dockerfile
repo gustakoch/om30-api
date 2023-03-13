@@ -31,6 +31,7 @@ RUN apt-get install -y libpq-dev \
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
 
+RUN apt-get -y update && apt-get install -y php-cli
 RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
 &&  docker-php-ext-enable redis
