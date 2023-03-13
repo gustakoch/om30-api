@@ -52,6 +52,11 @@ class ImportController extends Controller
                         DB::rollBack();
                         continue;
                     }
+                } else {
+                    if (!$this->numbersStartedWithSevenEightOrNine($data[11])) {
+                        DB::rollBack();
+                        continue;
+                    }
                 }
 
                 Pacient::create([
