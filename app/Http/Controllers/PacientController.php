@@ -30,7 +30,7 @@ class PacientController extends Controller
 
         $pacients->transform(function ($pacient) {
             if ($pacient->photo) {
-                $pacient->photo = $_ENV['APP_URL'] . '/storage/photos/' . $pacient->photo;
+                $pacient->photo = asset('/storage/photos/' . $pacient->photo);
             }
 
             return $pacient;
@@ -146,19 +146,11 @@ class PacientController extends Controller
                 $namePhotoFile = $upload['filename'];
             }
 
-            $pacient->full_name = $request->full_name;
-            $pacient->mother_full_name = $request->mother_full_name;
-            $pacient->birth_day = $request->birth_day;
+            $pacient->fill($request->all());
             $pacient->photo = $namePhotoFile;
             $pacient->save();
 
-            $address->street = $request->street;
-            $address->number = $request->number;
-            $address->complement = $request->complement;
-            $address->district = $request->district;
-            $address->city = $request->city;
-            $address->state = $request->state;
-            $address->zip_code = $request->zip_code;
+            $address->fill($request->all());
             $address->save();
 
             return response()->json(['message' => 'Registro atualizado com sucesso.']);
