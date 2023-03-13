@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 class CepController extends Controller
 {
@@ -16,10 +16,11 @@ class CepController extends Controller
         }
 
         $cep = $request->query('search');
-        $cachedCep = Cache::get('cep:'.$cep);
+        $redis = Redis::connection();
+        $cachedCep = $redis->get('cep:'.$cep);
 
         if ($cachedCep) {
-            return $cachedCep;
+            return response()->json(json_decode($cachedCep));
         }
 
         try {
@@ -31,7 +32,7 @@ class CepController extends Controller
                 $jsonResponse = $response->getBody();
                 $cepInfo = json_decode($jsonResponse);
 
-                Cache::put('cep:'.$cep, $cepInfo, now()->addDay());
+                $redis->setex('cep:'.$cep, now()->addDay()->diffInSeconds(now()), $jsonResponse);
 
                 return $cepInfo;
             } else {

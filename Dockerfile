@@ -28,8 +28,12 @@ RUN apt-get install -y libpq-dev \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install pdo pdo_pgsql pgsql pdo_mysql
 
-RUN pecl install xdebug 
+RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
+
+RUN pecl install -o -f redis \
+&&  rm -rf /tmp/pear \
+&&  docker-php-ext-enable redis
 
 RUN    echo "xdebug.mode=debug" >>  /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini\
     && echo "xdebug.client_host=host.docker.internal" >>  /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini\
