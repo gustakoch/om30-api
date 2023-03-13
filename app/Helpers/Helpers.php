@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use DateTime;
+
 class Helpers
 {
     public static function validateCPF($cpf): bool {
@@ -46,4 +48,9 @@ class Helpers
             return false;
         }
     }
+
+    public static function convertDateToBD($date) {
+        $dateTime = DateTime::createFromFormat('d/m/Y', $date);
+        return $dateTime->format('Y-m-d');
+      }
 }
