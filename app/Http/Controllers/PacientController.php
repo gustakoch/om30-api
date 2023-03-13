@@ -22,7 +22,7 @@ class PacientController extends Controller
         $pacients = Pacient::with('address')
             ->whereRaw('lower(cpf) LIKE ?', ["%".strtolower($search)."%"])
             ->orWhereRaw('lower(full_name) LIKE ?', ["%".strtolower($search)."%"])
-            ->get();
+            ->paginate(10);
 
         if ($pacients->isEmpty()) {
             return response()->json(['message' => 'Nenhum registro encontrado.'], 404);
